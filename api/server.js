@@ -45,7 +45,7 @@ module.exports = class FilmServer {
       });
       console.log('Database connection successful!');
     } catch (error) {
-      console.log(err);
+      console.log(error);
       process.exit(1);
     }
   }
