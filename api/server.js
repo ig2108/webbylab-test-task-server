@@ -6,6 +6,8 @@ const filmRouter = require('./films/film.router');
 
 require('dotenv').config();
 
+// const PORT = process.env.PORT || 3096;
+
 module.exports = class FilmServer {
   constructor() {
     this.server = null;
@@ -49,7 +51,7 @@ module.exports = class FilmServer {
   }
 
   startListening() {
-    const PORT = process.env.PORT;
+    const PORT = process.env.PORT || 3096;
 
     this.server.listen(PORT, () => {
       console.log('Server started listening on port', PORT);
