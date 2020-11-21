@@ -1,0 +1,33 @@
+{
+  "name": "webbylab-test-task-server",
+  "version": "1.0.0",
+  "description": "server-part",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ig2108/webbylab-test-task-server.git"
+  },
+  "author": "Ivan Golubey",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ig2108/webbylab-test-task-server/issues"
+  },
+  "homepage": "https://github.com/ig2108/webbylab-test-task-server#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "joi": "^14.3.1",
+    "mongodb": "^3.5.9",
+    "mongoose": "^5.9.22",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
