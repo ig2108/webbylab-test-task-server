@@ -33,8 +33,8 @@ module.exports = class FilmServer {
   }
 
   initRoutes() {
-    // this.server.use('/', )
-    this.server.use('/', filmRouter);
+    // this.server.use('/', filmRouter)
+    this.server.use('/films', filmRouter);
   }
 
   async initDataBase() {
