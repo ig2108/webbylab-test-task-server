@@ -56,9 +56,7 @@ class FilmController {
       }
 
       const films = await filmModel.find();
-      // console.log(films);
-      // console.log(res.status(204).json(films));
-      return res.status(204).json(films);
+      return res.status(202).send(films);
     } catch (error) {
       next(error);
     }
