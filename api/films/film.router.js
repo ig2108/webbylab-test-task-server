@@ -23,11 +23,4 @@ filmRouter.delete(
   filmController.deleteFilmById,
 );
 
-filmRouter.put(
-  '/:id',
-  filmController.validateId,
-  filmController.validateUpdateFilm,
-  filmController.updateFilmById,
-);
-
 module.exports = filmRouter;

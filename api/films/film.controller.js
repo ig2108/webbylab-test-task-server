@@ -62,25 +62,6 @@ class FilmController {
     }
   }
 
-  // UPDATE
-
-  async updateFilmById(req, res, next) {
-    try {
-      const filmId = req.params.id;
-
-      const updatedFilm = await filmModel.findFilmByIdAndUpdate(
-        filmId,
-        req.body,
-      );
-      if (!updatedFilm) {
-        return res.status(404).send();
-      }
-      return res.status(204).send();
-    } catch (error) {
-      next(error);
-    }
-  }
-
   // VALIDATION FUNCTIONS
 
   validateCreateFilm(req, res, next) {
@@ -89,21 +70,6 @@ class FilmController {
       releaseYear: Joi.number().required(),
       format: Joi.string().required(),
       stars: Joi.array().required(),
-    });
-    const validationResult = Joi.validate(req.body, validationRules);
-    if (validationResult.error) {
-      return res.status(400).send(validationResult.error);
-    }
-
-    next();
-  }
-
-  validateUpdateFilm(req, res, next) {
-    const validationRules = Joi.object({
-      title: Joi.string(),
-      releaseYear: Joi.number(),
-      format: Joi.string(),
-      stars: Joi.array(),
     });
     const validationResult = Joi.validate(req.body, validationRules);
     if (validationResult.error) {

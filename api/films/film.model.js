@@ -18,20 +18,6 @@ const filmSchema = new Schema({
   },
 });
 
-filmSchema.statics.findFilmByIdAndUpdate = findFilmByIdAndUpdate;
-
-async function findFilmByIdAndUpdate(filmId, updateParams) {
-  return this.findByIdAndUpdate(
-    filmId,
-    {
-      $set: updateParams,
-    },
-    {
-      new: true,
-    },
-  );
-}
-
 const filmModel = mongoose.model('Film', filmSchema);
 
 module.exports = filmModel;
