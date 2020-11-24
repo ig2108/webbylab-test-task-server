@@ -12,4 +12,4 @@ server-part of webbylab test task
 
 Ссылка на объяснение архитектуры:
 
-# https://github.com/ig2108/webbylab-test-task-front/blob/main/explanation%20of%20architecture.txt
+# https://github.com/ig2108/webbylab-test-task-server/blob/main/explanation%20of%20architecture.txt
