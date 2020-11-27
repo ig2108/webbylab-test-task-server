@@ -5,7 +5,7 @@ const filmRouter = Router();
 
 filmRouter.post(
   '/',
-  filmController.validateCreateFilm,
+  filmController.validateCreateFilm.bind(filmController),
   filmController.createFilm,
 );
 
