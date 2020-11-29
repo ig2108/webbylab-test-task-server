@@ -9,6 +9,11 @@ filmRouter.post(
   filmController.createFilm,
 );
 
+filmRouter.post(
+  '/upload',
+  filmController.uploadFilms,
+);
+
 filmRouter.get('/', filmController.getFilms);
 
 filmRouter.get(

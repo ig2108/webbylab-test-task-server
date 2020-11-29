@@ -4,6 +4,11 @@ const {
   Types: { ObjectId },
 } = require('mongoose');
 
+const path = require('path');
+const fs = require('fs');
+const { promises: fsPromises } = require('fs');
+const { json } = require('express');
+
 class FilmController {
 
   // CREATE
@@ -17,6 +22,47 @@ class FilmController {
     }
   }
 
+  async uploadFilms(req, res, next) {
+    try {
+      const tmpPath = "./tmp/filmsToAdd.txt";
+      fs.writeFileSync(tmpPath, req.files.data.data);
+      const txtFile = fs.readFileSync(tmpPath, {encoding:'utf8'});
+      const arrTxt = txtFile.split("\n\n");
+      let jsonString = '[{';
+      arrTxt.map(el => {
+        const objEnteries = el.split("\n");
+        const params = objEnteries.join(",").replace(/\s+/g, '')
+        const items = params.split(',');
+        for (let i = 0; i < items.length; i++) {
+          const current = items[i].split(':');
+
+          if (current[0] === '') {
+            return;
+          } else if(current[0] === "Stars") {
+            jsonString += '"' + current[0].toLowerCase() + '":' + '["' + current[1] + '",';
+          } else if (current.length === 1) {
+            jsonString += '"' + current[0] + '",'
+          } else {
+            let keyBox =  current[0][0].toLowerCase() + current[0].substring(1);
+            jsonString += '"' + keyBox + '":"' + current[1] + '",';
+          }
+        }
+        jsonString = jsonString.substr(0, jsonString.length - 1);
+        jsonString += ']},{';
+      });
+      jsonString = jsonString.substr(0, jsonString.length - 1);
+      jsonString += ']}]';
+
+      const objToAdd = JSON.parse(jsonString);
+      objToAdd.map(film => {
+        filmModel.create(film);
+      })
+      return res.status(200).send();
+    } catch (error) {
+      next(error);
+    };
+  };
+
   // READ
 
   async getFilms(req, res, next) {
@@ -25,8 +71,8 @@ class FilmController {
       return res.status(200).json(films);
     } catch (error) {
       next(error);
-    }
-  }
+    };
+  };
 
   async getFilmById(req, res, next) {
     try {
@@ -35,13 +81,13 @@ class FilmController {
       const film = await filmModel.findById(filmId);
       if (!film) {
         return res.status(404).send();
-      }
+      };
 
       return res.status(200).json(film);
     } catch (error) {
       next(error);
-    }
-  }
+    };
+  };
 
   // DELETE
 
@@ -58,8 +104,8 @@ class FilmController {
       return res.status(202).send(films);
     } catch (error) {
       next(error);
-    }
-  }
+    };
+  };
 
   // VALIDATION FUNCTIONS
 

@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
+const fileUpload = require('express-fileupload');
 const filmRouter = require('./films/film.router');
 
 require('dotenv').config();
@@ -11,7 +12,7 @@ require('dotenv').config();
 module.exports = class FilmServer {
   constructor() {
     this.server = null;
-  }
+  };
 
   async start() {
     this.initServer();
@@ -19,23 +20,25 @@ module.exports = class FilmServer {
     this.initRoutes();
     await this.initDataBase();
     this.startListening();
-  }
+  };
 
   initServer() {
     this.server = express();
-  }
+  };
 
   initMiddlewares() {
     this.server.use(cors({ origin: '*' }));
     this.server.use(express.json());
     this.server.use(express.urlencoded({ extended: true }));
     this.server.use(morgan('combined'));
-  }
+    this.server.use(fileUpload());
+    this.server.use(express.static('public'));
+  };
 
   initRoutes() {
     // this.server.use('/', filmRouter)
     this.server.use('/films', filmRouter);
-  }
+  };
 
   async initDataBase() {
     try {
@@ -48,8 +51,8 @@ module.exports = class FilmServer {
     } catch (error) {
       console.log(error);
       process.exit(1);
-    }
-  }
+    };
+  };
 
   startListening() {
     const PORT = process.env.PORT || 3096;
@@ -57,5 +60,5 @@ module.exports = class FilmServer {
     this.server.listen(PORT, () => {
       console.log('Server started listening on port', PORT);
     });
-  }
+  };
 };
