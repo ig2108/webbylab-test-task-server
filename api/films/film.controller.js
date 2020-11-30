@@ -24,40 +24,25 @@ class FilmController {
 
   async uploadFilms(req, res, next) {
     try {
+      let message;
       const tmpPath = "./tmp/filmsToAdd.txt";
-      fs.writeFileSync(tmpPath, req.files.data.data);
-      const txtFile = fs.readFileSync(tmpPath, {encoding:'utf8'});
-      const arrTxt = txtFile.split("\n\n");
-      let jsonString = '[{';
-      arrTxt.map(el => {
-        const objEnteries = el.split("\n");
-        const params = objEnteries.join(",").replace(/\s+/g, '')
-        const items = params.split(',');
-        for (let i = 0; i < items.length; i++) {
-          const current = items[i].split(':');
+      const uploadFile = req.files.file.data;
+      fs.writeFileSync(tmpPath, uploadFile);
+      const txtFilmFile = fs.readFileSync(tmpPath, {encoding:'utf8'});
+      if (txtFilmFile.length === 0) {
+        message = 'File is empty! Please load file with data';
+        return res.status(400).send(message)
+      }
 
-          if (current[0] === '') {
-            return;
-          } else if(current[0] === "Stars") {
-            jsonString += '"' + current[0].toLowerCase() + '":' + '["' + current[1] + '",';
-          } else if (current.length === 1) {
-            jsonString += '"' + current[0] + '",'
-          } else {
-            let keyBox =  current[0][0].toLowerCase() + current[0].substring(1);
-            jsonString += '"' + keyBox + '":"' + current[1] + '",';
-          }
-        }
-        jsonString = jsonString.substr(0, jsonString.length - 1);
-        jsonString += ']},{';
-      });
-      jsonString = jsonString.substr(0, jsonString.length - 1);
-      jsonString += ']}]';
+      // make an array, every element of array is the separate film
+      const filmsArrayFromTxt = txtFilmFile.split("\n\n");
 
-      const objToAdd = JSON.parse(jsonString);
-      objToAdd.map(film => {
-        filmModel.create(film);
-      })
-      return res.status(200).send();
+      const filmsToAdd = this.transformFileToArrayOfObjects(filmsArrayFromTxt);
+
+      await this.addArrayOfFilmsObjectsToDb(filmsToAdd);
+
+      message = 'Films successfully added!';
+      return res.status(200).send(message);
     } catch (error) {
       next(error);
     };
@@ -180,6 +165,68 @@ class FilmController {
 
   };
 
+  transformFileToArrayOfObjects = (file) => {
+    let jsonString = '[{';
+    file.map(el => {
+      const objEnteries = el.split("\n");
+      const params = objEnteries.join(",").replace(/\s+/g, '');
+      const items = params.split(',');
+      jsonString += this.setStringToJsonType(items);
+    });
+    jsonString = this.changeLastNumberOfValuesInString(jsonString, 2,']');
+
+    const arrayOfObjects = JSON.parse(jsonString);
+    return arrayOfObjects;
+  };
+
+  setStringToJsonType (items) {
+    let stringToJson = '';
+    for (let i = 0; i < items.length; i++) {
+      const currentItem = items[i].split(':');
+      let keyValue;
+      if (currentItem[0] !== '' ) {
+        keyValue = this.makeInStringFirstLetterSmall(currentItem[0]);
+      };
+
+      // if there are empty string, it will be miss;
+      if (currentItem[0] === '') {
+        console.log("empty string is missed");
+      }
+
+      // Check, if there value of key is an array
+      else if(keyValue === "stars") {
+        stringToJson += '"' + keyValue + '":' + '["' + currentItem[1] + '",';
+      }
+
+      // identify is the element belong to array and add in array
+      else if (currentItem.length === 1) {
+        stringToJson += '"' + currentItem[0] + '",';
+      }
+
+      // default set key:value
+      else {
+        stringToJson += '"' + keyValue + '":"' + currentItem[1] + '",';
+      };
+    };
+
+    stringToJson = this.changeLastNumberOfValuesInString(stringToJson, 1,']},{');
+    return stringToJson;
+  };
+
+  addArrayOfFilmsObjectsToDb (arrayOfFilmObjects) {
+    return arrayOfFilmObjects.map(film => {
+      filmModel.create(film);
+    });
+  };
+
+  makeInStringFirstLetterSmall (string) {
+    return string[0].toLowerCase() + string.substring(1);
+  };
+
+  changeLastNumberOfValuesInString (string, numberOfValues, newValue) {
+    let newString = string.substring(0, string.length - numberOfValues);
+    return newString += newValue;
+  };
 };
 
 module.exports = new FilmController();

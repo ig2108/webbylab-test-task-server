@@ -11,7 +11,7 @@ filmRouter.post(
 
 filmRouter.post(
   '/upload',
-  filmController.uploadFilms,
+  filmController.uploadFilms.bind(filmController),
 );
 
 filmRouter.get('/', filmController.getFilms);
