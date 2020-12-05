@@ -11,7 +11,9 @@ filmRouter.post(
 
 filmRouter.post(
   '/upload',
-  filmController.uploadFilms.bind(filmController),
+  filmController.setUploadFilmsFromFileToReqBody.bind(filmController),
+  filmController.validateUploadFilm.bind(filmController),
+  filmController.createUploadsFilms,
 );
 
 filmRouter.get('/', filmController.getFilms);

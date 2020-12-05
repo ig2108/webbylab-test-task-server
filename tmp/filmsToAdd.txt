@@ -1,9 +1,9 @@
-Title: Test txt
-Release Year: 2020
+Title: Test txt 3
+Release Year: 2019
 Format: VHS
-Stars: Mel Brooks, Clevon Little, Harvey Korman, Gene Wilder, Slim Pickens, Madeline Kahn
+Stars: Test actor
 
-Title: Test txt 2
-Release Year: 2020
+Title: Test txt 4
+Release Year: 2019
 Format: DVD
-Stars: Humphrey Bogart, Ingrid Bergman, Claude Rains, Peter Lorre
+Stars: Test actor
