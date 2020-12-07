@@ -31,10 +31,10 @@ class FilmController {
       let message;
       const tmpPath = "./tmp/filmsToAdd.txt";
       // FOR PRODUCTION VERSION !!!
-      // const uploadFile = req.files.file.data;
+      const uploadFile = req.files.file.data;
 
       // FOR DEVELOPMENT VERSION !!!
-      const uploadFile = req.files.data.data;
+      // const uploadFile = req.files.data.data;
 
       fs.writeFileSync(tmpPath, uploadFile);
       const txtFilmFile = fs.readFileSync(tmpPath, {encoding:'utf8'});
