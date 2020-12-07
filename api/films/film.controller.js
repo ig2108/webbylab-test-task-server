@@ -31,10 +31,10 @@ class FilmController {
       let message;
       const tmpPath = "./tmp/filmsToAdd.txt";
       // FOR PRODUCTION VERSION !!!
-      const uploadFile = req.files.file.data;
+      // const uploadFile = req.files.file.data;
 
       // FOR DEVELOPMENT VERSION !!!
-      // const uploadFile = req.files.data.data;
+      const uploadFile = req.files.data.data;
 
       fs.writeFileSync(tmpPath, uploadFile);
       const txtFilmFile = fs.readFileSync(tmpPath, {encoding:'utf8'});
@@ -139,13 +139,21 @@ class FilmController {
       return res.status(400).send(validationResult.error);
     };
 
+    let uniqueFilms = [];
+
     for (let film of req.body) {
       const isFilmDuplicated = await this.validateOnDuplicates(film);
 
-      if (isFilmDuplicated) {
-        return res.status(400).send('DB already have similar film!');
+      if (!isFilmDuplicated) {
+        uniqueFilms.push(film);
       };
     };
+
+    if (uniqueFilms.length === 0) {
+      return res.status(400).send('DB already have similar film!');
+    } else {
+      req.body = uniqueFilms;
+    }
 
     next();
   };
@@ -166,7 +174,7 @@ class FilmController {
     let isFilmDuplicated;
 
     if (findByTitleFilms.length > 0) {
-      isFilmDuplicated = this.isFilmDuplicateByYearOrActors(findByTitleFilms, releaseYear, stars);
+      isFilmDuplicated = this.isFilmDuplicateByYearAndActors(findByTitleFilms, releaseYear, stars);
     };
 
     return isFilmDuplicated;
@@ -175,7 +183,7 @@ class FilmController {
   // HELP FUNCTIONS
 
   findFilmByReleaseYear (year, filmsArray) {
-    return filmsArray.find(film => film.releaseYear === year);
+    return filmsArray.find(film => film.releaseYear === +year);
   };
 
   findFilmsByActors (actorsArray, filmsArray) {
@@ -194,11 +202,11 @@ class FilmController {
     return matchedFilms;
   };
 
-  isFilmDuplicateByYearOrActors (filmsArray, year, actorsArray) {
+  isFilmDuplicateByYearAndActors (filmsArray, year, actorsArray) {
     const matchedFilmObjByReleaseYear = this.findFilmByReleaseYear(year, filmsArray);
     const matchedFilmsByActors = this.findFilmsByActors(actorsArray, filmsArray);
 
-    if ( matchedFilmObjByReleaseYear || matchedFilmsByActors.length > 0) {
+    if ( matchedFilmObjByReleaseYear && matchedFilmsByActors.length > 0) {
       return true;
     };
     return false;
